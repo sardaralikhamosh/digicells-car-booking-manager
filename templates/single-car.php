@@ -3,193 +3,163 @@ get_header();
 
 while (have_posts()) : the_post();
     $car_id = get_the_ID();
-    $gallery = get_post_meta($car_id, '_dcbm_gallery_images', true);
-    $gallery_images = $gallery ? explode(',', $gallery) : array();
-    ?>
+    $price = get_post_meta($car_id, '_dcbm_price_per_day', true);
+    $transmission = get_post_meta($car_id, '_dcbm_transmission', true);
+    $fuel_type = get_post_meta($car_id, '_dcbm_fuel_type', true);
+    $capacity = get_post_meta($car_id, '_dcbm_passenger_capacity', true);
+    $car_model = get_post_meta($car_id, '_dcbm_car_model', true);
+    $manufacturer = get_post_meta($car_id, '_dcbm_manufacturer', true);
+    $reg_year = get_post_meta($car_id, '_dcbm_registration_year', true);
+    $car_number = get_post_meta($car_id, '_dcbm_car_number', true);
+    $pickup_location = get_post_meta($car_id, '_dcbm_pickup_location', true);
+    $availability = get_post_meta($car_id, '_dcbm_availability', true);
     
-    <div class="dcbm-single-car">
-        <div class="dcbm-container">
-            <div class="dcbm-car-header">
-                <h1><?php the_title(); ?></h1>
+    if (!$availability) $availability = 'available';
+?>
+<style>
+.dcbm-single-car {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.dcbm-single-car h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #1a1a2e;
+}
+.dcbm-single-car-image {
+    margin-bottom: 30px;
+}
+.dcbm-single-car-image img {
+    width: 100%;
+    border-radius: 16px;
+}
+.dcbm-single-car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin: 30px 0;
+}
+.dcbm-car-detail-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.dcbm-car-detail-card h3 {
+    color: #f68511;
+    margin-bottom: 15px;
+}
+.dcbm-detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+.dcbm-detail-label {
+    font-weight: 600;
+    color: #64748b;
+}
+.dcbm-detail-value {
+    color: #1a1a2e;
+}
+.dcbm-book-now-section {
+    text-align: center;
+    margin: 40px 0;
+}
+.dcbm-book-now-btn {
+    background: #f68511;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 40px;
+    cursor: pointer;
+}
+.dcbm-book-now-btn:hover {
+    background: #0048a5;
+}
+</style>
+
+<div class="dcbm-single-car">
+    <h1><?php the_title(); ?></h1>
+    
+    <div class="dcbm-single-car-image">
+        <?php if (has_post_thumbnail()): ?>
+            <?php the_post_thumbnail('large'); ?>
+        <?php endif; ?>
+    </div>
+    
+    <div class="dcbm-single-car-grid">
+        <div class="dcbm-car-detail-card">
+            <h3>Specifications</h3>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Model:</span>
+                <span class="dcbm-detail-value"><?php echo esc_html($car_model); ?></span>
             </div>
-            
-            <div class="dcbm-car-gallery">
-                <?php if (has_post_thumbnail()): ?>
-                    <div class="dcbm-main-image">
-                        <?php the_post_thumbnail('large'); ?>
-                    </div>
-                <?php endif; ?>
-                
-                <?php if (!empty($gallery_images)): ?>
-                    <div class="dcbm-thumbnails">
-                        <?php foreach ($gallery_images as $image_id): ?>
-                            <div class="dcbm-thumbnail" onclick="changeMainImage(this)">
-                                <?php echo wp_get_attachment_image($image_id, 'thumbnail'); ?>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Manufacturer:</span>
+                <span class="dcbm-detail-value"><?php echo esc_html($manufacturer); ?></span>
             </div>
-            
-            <div class="dcbm-car-info-grid">
-                <!-- Specifications -->
-                <div class="dcbm-info-card">
-                    <h3>Specifications</h3>
-                    <div class="dcbm-specs-grid">
-                        <?php
-                        $specs = array(
-                            'Model' => get_post_meta($car_id, '_dcbm_car_model', true),
-                            'Manufacturer' => get_post_meta($car_id, '_dcbm_manufacturer', true),
-                            'Year' => get_post_meta($car_id, '_dcbm_registration_year', true),
-                            'Color' => get_post_meta($car_id, '_dcbm_color', true),
-                            'Transmission' => ucfirst(get_post_meta($car_id, '_dcbm_transmission', true)),
-                            'Fuel Type' => ucfirst(get_post_meta($car_id, '_dcbm_fuel_type', true)),
-                            'Passengers' => get_post_meta($car_id, '_dcbm_passenger_capacity', true) . ' seats',
-                            'Luggage' => get_post_meta($car_id, '_dcbm_luggage_capacity', true),
-                        );
-                        foreach ($specs as $label => $value):
-                            if ($value):
-                        ?>
-                            <div class="dcbm-spec-item">
-                                <span class="dcbm-spec-label"><?php echo $label; ?>:</span>
-                                <span class="dcbm-spec-value"><?php echo esc_html($value); ?></span>
-                            </div>
-                        <?php
-                            endif;
-                        endforeach;
-                        ?>
-                    </div>
-                </div>
-                
-                <!-- Pricing -->
-                <div class="dcbm-info-card">
-                    <h3>Pricing</h3>
-                    <div class="dcbm-pricing-grid">
-                        <?php
-                        $pricing = array(
-                            'Without Fuel' => get_post_meta($car_id, '_dcbm_rent_per_day_without_fuel', true),
-                            'With Fuel' => get_post_meta($car_id, '_dcbm_rent_per_day_with_fuel', true),
-                            'With Driver' => get_post_meta($car_id, '_dcbm_rent_per_day_with_driver', true),
-                            'Security Deposit' => get_post_meta($car_id, '_dcbm_security_deposit', true),
-                        );
-                        foreach ($pricing as $label => $price):
-                            if ($price):
-                        ?>
-                            <div class="dcbm-pricing-item">
-                                <span class="dcbm-pricing-label"><?php echo $label; ?>:</span>
-                                <span class="dcbm-pricing-value">PKR <?php echo number_format($price); ?> / day</span>
-                            </div>
-                        <?php
-                            endif;
-                        endforeach;
-                        ?>
-                    </div>
-                </div>
-                
-                <!-- Location -->
-                <div class="dcbm-info-card">
-                    <h3>Location</h3>
-                    <div class="dcbm-specs-grid">
-                        <div class="dcbm-spec-item">
-                            <span class="dcbm-spec-label">Pickup:</span>
-                            <span class="dcbm-spec-value"><?php echo esc_html(get_post_meta($car_id, '_dcbm_pickup_location', true)); ?></span>
-                        </div>
-                        <div class="dcbm-spec-item">
-                            <span class="dcbm-spec-label">Drop-off:</span>
-                            <span class="dcbm-spec-value"><?php echo esc_html(get_post_meta($car_id, '_dcbm_dropoff_location', true)); ?></span>
-                        </div>
-                        <div class="dcbm-spec-item">
-                            <span class="dcbm-spec-label">City:</span>
-                            <span class="dcbm-spec-value"><?php echo esc_html(get_post_meta($car_id, '_dcbm_city', true)); ?></span>
-                        </div>
-                    </div>
-                    <?php $map_link = get_post_meta($car_id, '_dcbm_google_map_link', true); ?>
-                    <?php if ($map_link): ?>
-                        <a href="<?php echo esc_url($map_link); ?>" target="_blank" class="dcbm-btn dcbm-btn-outline" style="margin-top: 15px; display: inline-block;">View on Map</a>
-                    <?php endif; ?>
-                </div>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Year:</span>
+                <span class="dcbm-detail-value"><?php echo esc_html($reg_year); ?></span>
             </div>
-            
-            <!-- Description -->
-            <div class="dcbm-info-card" style="margin-bottom: 30px;">
-                <h3>Description</h3>
-                <?php the_content(); ?>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Registration #:</span>
+                <span class="dcbm-detail-value"><?php echo esc_html($car_number); ?></span>
             </div>
-            
-            <!-- Features -->
-            <div class="dcbm-info-card" style="margin-bottom: 30px;">
-                <h3>Features</h3>
-                <div class="dcbm-specs-grid">
-                    <?php
-                    $features = array(
-                        'Air Conditioning' => get_post_meta($car_id, '_dcbm_air_conditioning', true),
-                        'GPS Navigation' => get_post_meta($car_id, '_dcbm_gps', true),
-                        'Bluetooth' => get_post_meta($car_id, '_dcbm_bluetooth', true),
-                        'USB Charging' => get_post_meta($car_id, '_dcbm_usb_charging', true),
-                        'Music System' => get_post_meta($car_id, '_dcbm_music_system', true),
-                    );
-                    foreach ($features as $label => $feature):
-                        if ($feature == 'yes'):
-                    ?>
-                        <div class="dcbm-spec-item">
-                            <span class="dcbm-spec-value">✓ <?php echo $label; ?></span>
-                        </div>
-                    <?php
-                        endif;
-                    endforeach;
-                    ?>
-                </div>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Transmission:</span>
+                <span class="dcbm-detail-value"><?php echo ucfirst($transmission); ?></span>
             </div>
-            
-            <!-- Book Now Button -->
-            <div style="text-align: center; margin: 40px 0;">
-                <button class="dcbm-btn dcbm-btn-primary book-now-btn" 
-                        data-car-id="<?php echo $car_id; ?>" 
-                        data-car-price="<?php echo get_post_meta($car_id, '_dcbm_rent_per_day_without_fuel', true); ?>"
-                        style="padding: 15px 40px; font-size: 1.1rem;">
-                    Book This Car Now
-                </button>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Fuel Type:</span>
+                <span class="dcbm-detail-value"><?php echo ucfirst($fuel_type); ?></span>
             </div>
-            
-            <!-- Related Cars -->
-            <?php
-            $related_args = array(
-                'post_type' => 'dcbm_car',
-                'posts_per_page' => 3,
-                'post__not_in' => array($car_id),
-                'meta_key' => '_dcbm_availability',
-                'meta_value' => 'available',
-            );
-            $related = new WP_Query($related_args);
-            if ($related->have_posts()):
-            ?>
-                <div class="dcbm-related-cars">
-                    <h3>Related Cars You Might Like</h3>
-                    <div class="dcbm-cars-grid">
-                        <?php while ($related->have_posts()) : $related->the_post(); ?>
-                            <?php echo do_shortcode('[digicells_car_listing]'); ?>
-                        <?php endwhile; ?>
-                    </div>
-                </div>
-            <?php
-            endif;
-            wp_reset_postdata();
-            ?>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Passengers:</span>
+                <span class="dcbm-detail-value"><?php echo $capacity; ?> seats</span>
+            </div>
+        </div>
+        
+        <div class="dcbm-car-detail-card">
+            <h3>Pricing & Location</h3>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Price Per Day:</span>
+                <span class="dcbm-detail-value">PKR <?php echo number_format($price); ?></span>
+            </div>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Pickup Location:</span>
+                <span class="dcbm-detail-value"><?php echo esc_html($pickup_location); ?></span>
+            </div>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Availability:</span>
+                <span class="dcbm-detail-value">
+                    <span style="color: <?php echo $availability == 'available' ? '#10b981' : ($availability == 'maintenance' ? '#f59e0b' : '#ef4444'); ?>">
+                        <?php echo ucfirst(str_replace('_', ' ', $availability)); ?>
+                    </span>
+                </span>
+            </div>
+        </div>
+        
+        <div class="dcbm-car-detail-card">
+            <h3>Description</h3>
+            <?php the_content(); ?>
         </div>
     </div>
     
-    <?php include DCBM_PLUGIN_DIR . 'templates/booking-form.php'; ?>
-    
-    <script>
-    function changeMainImage(element) {
-        const imgSrc = $(element).find('img').attr('src');
-        $('.dcbm-main-image img').attr('src', imgSrc);
-        $('.dcbm-thumbnail').removeClass('active');
-        $(element).addClass('active');
-    }
-    </script>
-    
-<?php endwhile;
+    <?php if ($availability == 'available'): ?>
+    <div class="dcbm-book-now-section">
+        <button class="dcbm-book-now-btn book-now" data-id="<?php echo $car_id; ?>" data-price="<?php echo $price; ?>">
+            Book This Car Now
+        </button>
+    </div>
+    <?php endif; ?>
+</div>
 
+<?php
+endwhile;
 get_footer();
 ?>

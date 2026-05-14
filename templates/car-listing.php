@@ -1,150 +1,150 @@
-<?php
-// Enqueue frontend assets
-wp_enqueue_style('dcbm-frontend-style');
-wp_enqueue_script('dcbm-frontend-script');
-
-// Get filters
-$search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
-$category = isset($_GET['category']) ? sanitize_text_field($_GET['category']) : '';
-$transmission = isset($_GET['transmission']) ? sanitize_text_field($_GET['transmission']) : '';
-
-// Build query
-$args = array(
-    'post_type' => 'dcbm_car',
-    'posts_per_page' => $atts['per_page'],
-    'paged' => get_query_var('paged') ? get_query_var('paged') : 1,
-    'meta_query' => array(
-        'relation' => 'AND',
-    ),
-);
-
-// Search filter
-if ($search) {
-    $args['s'] = $search;
-}
-
-// Transmission filter
-if ($transmission) {
-    $args['meta_query'][] = array(
-        'key' => '_dcbm_transmission',
-        'value' => $transmission,
-    );
-}
-
-// Category filter
-if ($category) {
-    $args['tax_query'] = array(
-        array(
-            'taxonomy' => 'dcbm_car_category',
-            'field' => 'slug',
-            'terms' => $category,
-        ),
-    );
-}
-
-$cars = new WP_Query($args);
-?>
-
 <div class="dcbm-car-listing-wrapper">
     <?php if ($atts['show_filter'] == 'yes'): ?>
     <div class="dcbm-filters">
-        <form id="dcbm-search-form" class="dcbm-filters-grid">
-            <div class="dcbm-filter-group">
-                <input type="text" name="search" placeholder="Search cars..." value="<?php echo esc_attr($search); ?>">
-            </div>
-            <div class="dcbm-filter-group">
-                <select name="category">
-                    <option value="">All Categories</option>
-                    <?php
-                    $categories = get_terms(array('taxonomy' => 'dcbm_car_category', 'hide_empty' => false));
-                    foreach ($categories as $cat) {
-                        echo '<option value="' . esc_attr($cat->slug) . '" ' . selected($category, $cat->slug, false) . '>' . esc_html($cat->name) . '</option>';
-                    }
-                    ?>
-                </select>
-            </div>
-            <div class="dcbm-filter-group">
-                <select name="transmission">
-                    <option value="">Transmission</option>
-                    <option value="automatic" <?php selected($transmission, 'automatic'); ?>>Automatic</option>
-                    <option value="manual" <?php selected($transmission, 'manual'); ?>>Manual</option>
-                </select>
-            </div>
-            <div class="dcbm-filter-group">
-                <button type="submit" class="dcbm-btn dcbm-btn-primary">Search</button>
-            </div>
-        </form>
+        <input type="text" id="dcbm-search-input" placeholder="Search cars...">
+        <select id="dcbm-category-filter">
+            <option value="">All Categories</option>
+            <?php
+            $categories = get_terms(array('taxonomy' => 'dcbm_car_category', 'hide_empty' => false));
+            foreach ($categories as $cat) {
+                echo '<option value="' . esc_attr($cat->slug) . '">' . esc_html($cat->name) . '</option>';
+            }
+            ?>
+        </select>
+        <select id="dcbm-transmission-filter">
+            <option value="">Transmission</option>
+            <option value="automatic">Automatic</option>
+            <option value="manual">Manual</option>
+        </select>
+        <button id="dcbm-search-btn">Search</button>
     </div>
     <?php endif; ?>
     
     <div class="dcbm-cars-grid">
-        <?php if ($cars->have_posts()): ?>
-            <?php while ($cars->have_posts()) : $cars->the_post();
-                $car_id = get_the_ID();
-                $price = get_post_meta($car_id, '_dcbm_rent_per_day_without_fuel', true);
-                $transmission = get_post_meta($car_id, '_dcbm_transmission', true);
-                $passenger_capacity = get_post_meta($car_id, '_dcbm_passenger_capacity', true);
-                $availability = get_post_meta($car_id, '_dcbm_availability', true);
-                $pickup_location = get_post_meta($car_id, '_dcbm_pickup_location', true);
-                ?>
-                <div class="dcbm-car-card">
-                    <div class="dcbm-car-image">
-                        <?php if (has_post_thumbnail()): ?>
-                            <?php the_post_thumbnail('medium'); ?>
-                        <?php else: ?>
-                            <img src="<?php echo DCBM_PLUGIN_URL . 'assets/images/placeholder-car.jpg'; ?>" alt="Car Image">
-                        <?php endif; ?>
-                        <div class="dcbm-availability-badge dcbm-availability-<?php echo $availability; ?>">
-                            <?php echo ucfirst(str_replace('_', ' ', $availability)); ?>
-                        </div>
+        <?php
+        $args = array(
+            'post_type' => 'dcbm_car',
+            'posts_per_page' => $atts['per_page'],
+            'post_status' => 'publish',
+        );
+        $cars = new WP_Query($args);
+        
+        if ($cars->have_posts()):
+            while ($cars->have_posts()): $cars->the_post();
+                $price = get_post_meta(get_the_ID(), '_dcbm_price_per_day', true);
+                $trans = get_post_meta(get_the_ID(), '_dcbm_transmission', true);
+                $capacity = get_post_meta(get_the_ID(), '_dcbm_passenger_capacity', true);
+                $availability = get_post_meta(get_the_ID(), '_dcbm_availability', true);
+                $location = get_post_meta(get_the_ID(), '_dcbm_pickup_location', true);
+                
+                if (!$availability) $availability = 'available';
+        ?>
+            <div class="dcbm-car-card">
+                <div class="dcbm-car-image">
+                    <?php if (has_post_thumbnail()): ?>
+                        <?php the_post_thumbnail('medium'); ?>
+                    <?php else: ?>
+                        <img src="<?php echo DCBM_PLUGIN_URL . 'assets/images/placeholder-car.jpg'; ?>" alt="Car">
+                    <?php endif; ?>
+                    <span class="dcbm-availability dcbm-availability-<?php echo $availability; ?>">
+                        <?php echo ucfirst(str_replace('_', ' ', $availability)); ?>
+                    </span>
+                </div>
+                <div class="dcbm-car-info">
+                    <h3><?php the_title(); ?></h3>
+                    <div class="dcbm-car-specs">
+                        <span><?php echo ucfirst($trans); ?></span>
+                        <span>👥 <?php echo $capacity; ?> seats</span>
                     </div>
-                    <div class="dcbm-car-details">
-                        <h3><?php the_title(); ?></h3>
-                        <div class="dcbm-car-specs">
-                            <span class="dcbm-spec"><?php echo ucfirst($transmission); ?></span>
-                            <span class="dcbm-spec">👥 <?php echo $passenger_capacity; ?> seats</span>
-                        </div>
-                        <div class="dcbm-car-location">
-                            📍 <?php echo esc_html($pickup_location); ?>
-                        </div>
-                        <div class="dcbm-car-price">
-                            <span class="dcbm-price">PKR <?php echo number_format($price); ?></span>
-                            <span class="dcbm-price-period">/ day</span>
-                        </div>
-                        <div class="dcbm-car-buttons">
-                            <a href="<?php echo get_permalink(); ?>" class="dcbm-btn dcbm-btn-outline">More Info</a>
-                            <?php if ($availability == 'available'): ?>
-                                <button class="dcbm-btn dcbm-btn-primary book-now-btn" data-car-id="<?php echo $car_id; ?>" data-car-price="<?php echo $price; ?>">
-                                    Book Now
-                                </button>
-                            <?php else: ?>
-                                <button class="dcbm-btn dcbm-btn-primary" disabled style="opacity: 0.5; cursor: not-allowed;">
-                                    Not Available
-                                </button>
-                            <?php endif; ?>
-                        </div>
+                    <div class="dcbm-car-location">📍 <?php echo esc_html($location); ?></div>
+                    <div class="dcbm-car-price">PKR <?php echo number_format($price); ?> <span>/ day</span></div>
+                    <div class="dcbm-car-buttons">
+                        <a href="<?php echo get_permalink(); ?>" class="dcbm-btn dcbm-btn-outline">Details</a>
+                        <?php if ($availability == 'available'): ?>
+                            <button class="dcbm-btn dcbm-btn-primary book-now" data-id="<?php echo get_the_ID(); ?>" data-price="<?php echo $price; ?>">Book Now</button>
+                        <?php else: ?>
+                            <button class="dcbm-btn dcbm-btn-primary" disabled style="opacity:0.5;cursor:not-allowed;">Not Available</button>
+                        <?php endif; ?>
                     </div>
                 </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <div class="dcbm-no-results">
-                <p>No cars found matching your criteria.</p>
             </div>
+        <?php
+            endwhile;
+            wp_reset_postdata();
+        else:
+        ?>
+            <div style="text-align:center;padding:50px;">No cars found.</div>
         <?php endif; ?>
     </div>
-    
-    <?php if ($cars->max_num_pages > 1): ?>
-        <div class="dcbm-pagination">
-            <?php
-            echo paginate_links(array(
-                'total' => $cars->max_num_pages,
-                'current' => max(1, get_query_var('paged')),
-                'prev_text' => '« Previous',
-                'next_text' => 'Next »',
-            ));
-            ?>
-        </div>
-    <?php endif; ?>
 </div>
 
-<?php wp_reset_postdata(); ?>
+<!-- Booking Modal -->
+<div id="dcbm-booking-modal" class="dcbm-modal" style="display:none;">
+    <div class="dcbm-modal-content">
+        <div class="dcbm-modal-header">
+            <h2>Book This Car</h2>
+            <button class="dcbm-modal-close">&times;</button>
+        </div>
+        <div class="dcbm-modal-body">
+            <form id="dcbm-booking-form">
+                <input type="hidden" name="car_id" value="">
+                <input type="hidden" id="number_of_days" value="">
+                <input type="hidden" id="total_amount" value="">
+                
+                <h3>Customer Information</h3>
+                <div class="dcbm-form-row">
+                    <div class="dcbm-form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="customer_name" required>
+                    </div>
+                    <div class="dcbm-form-group">
+                        <label>Phone Number *</label>
+                        <input type="tel" id="customer_phone" required>
+                    </div>
+                </div>
+                <div class="dcbm-form-group">
+                    <label>Email Address *</label>
+                    <input type="email" id="customer_email" required>
+                </div>
+                
+                <h3>Booking Information</h3>
+                <div class="dcbm-form-row">
+                    <div class="dcbm-form-group">
+                        <label>Pickup Date *</label>
+                        <input type="date" id="pickup_date" required>
+                    </div>
+                    <div class="dcbm-form-group">
+                        <label>Return Date *</label>
+                        <input type="date" id="return_date" required>
+                    </div>
+                </div>
+                <div class="dcbm-form-group">
+                    <label>Pickup Location *</label>
+                    <input type="text" id="pickup_location" required placeholder="Enter pickup location">
+                </div>
+                
+                <h3>Extra Services</h3>
+                <div id="dcbm-extra-services-list" class="dcbm-services-list">
+                    <!-- Services loaded via AJAX -->
+                </div>
+                
+                <div class="dcbm-price-summary">
+                    <div class="dcbm-price-row">
+                        <span>Car Rent</span>
+                        <span id="dcbm-car-rent">PKR 0</span>
+                    </div>
+                    <div class="dcbm-price-row">
+                        <span>Extra Services</span>
+                        <span id="dcbm-services-total">PKR 0</span>
+                    </div>
+                    <div class="dcbm-price-row dcbm-price-total">
+                        <span>Total Amount</span>
+                        <span id="dcbm-total-amount">PKR 0</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="dcbm-submit-btn">Submit Booking</button>
+            </form>
+        </div>
+    </div>
+</div>
