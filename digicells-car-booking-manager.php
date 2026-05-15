@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Digicells Car Booking Manager
- * Plugin URI: https://hamaribooking.com/
+ * Plugin URI: https://digicellinternational.github.io
  * Description: Professional car rental and booking management system
  * Version: 1.0.0
  * Author: Digicells
