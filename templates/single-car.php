@@ -13,6 +13,7 @@ while (have_posts()) : the_post();
     $car_number = get_post_meta($car_id, '_dcbm_car_number', true);
     $pickup_location = get_post_meta($car_id, '_dcbm_pickup_location', true);
     $availability = get_post_meta($car_id, '_dcbm_availability', true);
+    $car_color = get_post_meta($car_id, '_dcbm_car_color', true); // NEW
     
     if (!$availability) $availability = 'available';
 ?>
@@ -109,6 +110,10 @@ while (have_posts()) : the_post();
             <div class="dcbm-detail-row">
                 <span class="dcbm-detail-label">Registration #:</span>
                 <span class="dcbm-detail-value"><?php echo esc_html($car_number); ?></span>
+            </div>
+            <div class="dcbm-detail-row">
+                <span class="dcbm-detail-label">Color:</span>
+                <span class="dcbm-detail-value"><?php echo esc_html($car_color); ?></span>
             </div>
             <div class="dcbm-detail-row">
                 <span class="dcbm-detail-label">Transmission:</span>

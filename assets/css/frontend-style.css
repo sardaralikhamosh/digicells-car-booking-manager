@@ -1,349 +1,266 @@
-/* Digicells Car Booking Manager Styles */
-:root {
-    --dcbm-primary: #f68511;
-    --dcbm-secondary: #0048a5;
-    --dcbm-white: #ffffff;
-    --dcbm-gray: #64748b;
-    --dcbm-border: #e2e8f0;
-}
-
-.dcbm-cars-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 30px;
-    padding: 20px 0;
-}
-
-.dcbm-car-card {
-    background: var(--dcbm-white);
+/* Advanced search form */
+.dcbm-advanced-search-container {
+    background: #fff;
     border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease;
-    border: 1px solid var(--dcbm-border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+.dcbm-advanced-search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.dcbm-search-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+.dcbm-search-field {
+    flex: 1;
+    min-width: 140px;
+}
+.dcbm-search-field label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #1a1a2e;
+}
+.dcbm-search-field input,
+.dcbm-search-field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+.dcbm-search-submit {
+    background: #f68511;
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.dcbm-search-extra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    font-size: 0.9rem;
+}
+.dcbm-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+.dcbm-quick-filters-btn {
+    background: none;
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    border-radius: 30px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.dcbm-filter-section {
+    margin-bottom: 20px;
+}
+.dcbm-filter-title {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.dcbm-filter-options {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+.dcbm-modal-footer {
+    padding: 15px 20px;
+    text-align: right;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
 }
 
-.dcbm-car-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+/* Force 4‑column grid layout */
+.dcbm-cars-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 25px !important;
+    margin-top: 30px !important;
+    width: 100% !important;
 }
 
-.dcbm-car-image {
-    position: relative;
-    height: 220px;
+/* Car card styling – ensure consistent width */
+.dcbm-car-card {
+    background: #fff;
+    border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    width: 100% !important;
+    margin: 0 !important;
 }
 
 .dcbm-car-image img {
     width: 100%;
-    height: 100%;
+    height: 200px;
     object-fit: cover;
 }
 
-.dcbm-availability {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    color: white;
-}
-
-.dcbm-availability-available {
-    background: #10b981;
-}
-
-.dcbm-availability-not_available {
-    background: #ef4444;
-}
-
-.dcbm-availability-maintenance {
-    background: #f59e0b;
-}
-
 .dcbm-car-info {
-    padding: 20px;
-}
-
-.dcbm-car-info h3 {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin: 0 0 12px 0;
-    color: #1a1a2e;
+    padding: 15px;
 }
 
 .dcbm-car-specs {
     display: flex;
-    gap: 15px;
-    margin-bottom: 12px;
-}
-
-.dcbm-car-specs span {
-    font-size: 0.85rem;
-    color: var(--dcbm-gray);
-    background: #f8fafc;
-    padding: 4px 10px;
-    border-radius: 20px;
+    gap: 10px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    color: #666;
 }
 
 .dcbm-car-location {
     font-size: 0.85rem;
-    color: var(--dcbm-gray);
-    margin-bottom: 15px;
+    color: #888;
+    margin-bottom: 10px;
 }
 
 .dcbm-car-price {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--dcbm-primary);
-    margin-bottom: 20px;
-}
-
-.dcbm-car-price span {
-    font-size: 0.85rem;
-    font-weight: normal;
-    color: var(--dcbm-gray);
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f68511;
+    margin: 10px 0;
 }
 
 .dcbm-car-buttons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
 }
 
-.dcbm-btn {
-    flex: 1;
-    padding: 10px 20px;
+/* Responsive: 2 columns on tablets, 1 on mobile */
+@media (max-width: 992px) {
+    .dcbm-cars-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+@media (max-width: 576px) {
+    .dcbm-cars-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+.dcbm-pagination {
     text-align: center;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    border: none;
-    transition: all 0.3s ease;
+    margin-top: 30px;
 }
-
-.dcbm-btn-primary {
-    background: var(--dcbm-primary);
-    color: white;
-}
-
-.dcbm-btn-primary:hover {
-    background: var(--dcbm-secondary);
-}
-
-.dcbm-btn-outline {
-    background: transparent;
-    border: 2px solid var(--dcbm-primary);
-    color: var(--dcbm-primary);
-}
-
-.dcbm-btn-outline:hover {
-    background: var(--dcbm-primary);
-    color: white;
-}
-
-.dcbm-filters {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    padding: 20px;
-    background: white;
-    border-radius: 12px;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.dcbm-filters input,
-.dcbm-filters select {
-    padding: 10px 15px;
-    border: 1px solid var(--dcbm-border);
-    border-radius: 8px;
-    font-size: 14px;
-    flex: 1;
-    min-width: 150px;
-}
-
-.dcbm-filters button {
-    padding: 10px 25px;
-    background: var(--dcbm-primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 600;
+.dcbm-page-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 14px;
+    margin: 0 4px;
+    border-radius: 6px;
     cursor: pointer;
 }
-
-/* Modal Styles */
+.dcbm-page-btn.active {
+    background: #f68511;
+    color: white;
+    border-color: #f68511;
+}
+.dcbm-prev, .dcbm-next {
+    font-weight: 600;
+}
 .dcbm-modal {
-    display: none;
     position: fixed;
-    z-index: 100000;
-    left: 0;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    overflow-y: auto;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-
 .dcbm-modal-content {
-    background: white;
-    margin: 50px auto;
-    max-width: 600px;
+    background: #fff;
+    max-width: 700px;
     width: 90%;
-    border-radius: 20px;
-    animation: slideIn 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
+    position: relative;
 }
-
-@keyframes slideIn {
-    from {
-        transform: translateY(-50px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
 .dcbm-modal-header {
-    padding: 20px 25px;
-    border-bottom: 1px solid var(--dcbm-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
 }
-
-.dcbm-modal-header h2 {
-    margin: 0;
-    color: var(--dcbm-secondary);
-}
-
 .dcbm-modal-close {
     background: none;
     border: none;
     font-size: 28px;
     cursor: pointer;
-    color: var(--dcbm-gray);
 }
-
 .dcbm-modal-body {
-    padding: 25px;
-    max-height: 70vh;
-    overflow-y: auto;
+    padding: 20px;
 }
-
+.dcbm-form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
 .dcbm-form-group {
-    margin-bottom: 20px;
+    flex: 1;
 }
-
 .dcbm-form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
     font-weight: 600;
-    color: #1a1a2e;
 }
-
-.dcbm-form-group input,
-.dcbm-form-group select {
+.dcbm-form-group input, .dcbm-form-group select {
     width: 100%;
-    padding: 12px;
-    border: 1px solid var(--dcbm-border);
-    border-radius: 10px;
-    font-size: 14px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
 }
-
-.dcbm-form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.dcbm-services-list {
-    margin: 20px 0;
-    padding: 15px;
-    background: #f8fafc;
-    border-radius: 12px;
-}
-
 .dcbm-service-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid var(--dcbm-border);
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
-
-.dcbm-service-item:last-child {
-    border-bottom: none;
-}
-
-.dcbm-service-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
 .dcbm-price-summary {
-    background: linear-gradient(135deg, var(--dcbm-primary), var(--dcbm-secondary));
-    color: white;
-    padding: 20px;
-    border-radius: 12px;
     margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #eee;
 }
-
 .dcbm-price-row {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    margin-bottom: 10px;
 }
-
 .dcbm-price-total {
-    font-size: 1.2rem;
-    font-weight: 700;
-    border-top: 1px solid rgba(255,255,255,0.3);
-    margin-top: 8px;
-    padding-top: 12px;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #f68511;
 }
-
 .dcbm-submit-btn {
-    width: 100%;
-    padding: 14px;
-    background: var(--dcbm-primary);
+    background: #f68511;
     color: white;
     border: none;
+    padding: 12px 24px;
     border-radius: 40px;
-    font-size: 16px;
-    font-weight: 600;
+    font-weight: bold;
     cursor: pointer;
+    width: 100%;
     margin-top: 20px;
-}
-
-.dcbm-submit-btn:hover {
-    background: var(--dcbm-secondary);
-}
-
-@media (max-width: 768px) {
-    .dcbm-cars-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .dcbm-form-row {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .dcbm-filters {
-        flex-direction: column;
-    }
-    
-    .dcbm-filters input,
-    .dcbm-filters select,
-    .dcbm-filters button {
-        width: 100%;
-    }
 }
