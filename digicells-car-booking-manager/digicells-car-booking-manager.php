@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Digicells Car Booking Manager
- * Version: 2.2.0
+ * Version: 2.2.1
  * Author: Sardar Ali Khamosh (Digicells)
  * Text Domain: digicells-cbm
  * Description: Professional car booking system with agents, locations, extra services, load more listings, and automated emails.
@@ -9,7 +9,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('DCBM_VERSION', '2.2.0');
+define('DCBM_VERSION', '2.2.1');
 define('DCBM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DCBM_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -129,7 +129,7 @@ function dcbm_init() {
     add_action('wp_enqueue_scripts', 'dcbm_frontend_scripts');
     add_action('admin_menu', 'dcbm_admin_menus');
     
-    // Custom admin UI for Locations and Agents (now using native WordPress UI)
+    // Custom admin UI for Locations and Agents
     add_action('add_meta_boxes', 'dcbm_add_location_metaboxes');
     add_action('add_meta_boxes', 'dcbm_add_agent_metaboxes');
     add_action('save_post_dcbm_location', 'dcbm_save_location_meta');
@@ -248,7 +248,7 @@ function dcbm_register_taxonomies() {
 }
 
 // ---------------------------
-// Locations Admin (simple, no custom parent metabox - using page-attributes)
+// Locations Admin
 // ---------------------------
 function dcbm_add_location_metaboxes() {
     add_meta_box('dcbm_location_image', __('Featured Image', 'digicells-cbm'), 'dcbm_location_image_metabox', 'dcbm_location', 'side', 'default');
@@ -627,7 +627,9 @@ function dcbm_ajax_submit_booking() {
     }
 }
 
-// AJAX: Advanced Search with Load More
+// ==========================================================
+// UPDATED AJAX FUNCTIONS WITH "SHOW PRICE" BUTTON
+// ==========================================================
 function dcbm_ajax_advanced_search_loadmore() {
     check_ajax_referer('dcbm_nonce','nonce');
     $location_id = isset($_POST['location_id']) ? intval($_POST['location_id']) : 0;
@@ -665,7 +667,10 @@ function dcbm_ajax_advanced_search_loadmore() {
                     <h3><?php the_title(); ?></h3>
                     <div class="dcbm-car-specs"><span><?php echo ucfirst($trans); ?></span><span>👥 <?php echo $capacity; ?> seats</span></div>
                     <div class="dcbm-car-location">📍 <?php echo esc_html($location_name); ?></div>
-                    <div class="dcbm-car-price">PKR <?php echo number_format($price); ?> <span>/ day</span></div>
+                    <div class="dcbm-car-price-wrapper">
+                        <button class="dcbm-show-price-btn">Show Price</button>
+                        <span class="dcbm-price-display" style="display:none;">PKR <?php echo number_format($price); ?> <span class="dcbm-price-per-day">/ day</span></span>
+                    </div>
                     <div class="dcbm-car-buttons">
                         <a href="<?php the_permalink(); ?>" class="dcbm-btn dcbm-btn-outline">Details</a>
                         <button class="dcbm-btn dcbm-btn-primary book-now" data-id="<?php echo get_the_ID(); ?>" data-price="<?php echo $price; ?>">Book Now</button>
@@ -682,7 +687,6 @@ function dcbm_ajax_advanced_search_loadmore() {
     wp_send_json_success(array('html' => $html, 'total_pages' => $total_pages, 'current_page' => $paged));
 }
 
-// AJAX: Load More for Simple Listing
 function dcbm_ajax_load_more_listing() {
     check_ajax_referer('dcbm_nonce','nonce');
     $paged = intval($_POST['paged']);
@@ -710,7 +714,10 @@ function dcbm_ajax_load_more_listing() {
                     <h3><?php the_title(); ?></h3>
                     <div class="dcbm-car-specs"><span><?php echo ucfirst($trans); ?></span><span>👥 <?php echo $capacity; ?> seats</span></div>
                     <div class="dcbm-car-location">📍 <?php echo esc_html($location_name); ?></div>
-                    <div class="dcbm-car-price">PKR <?php echo number_format($price); ?> <span>/ day</span></div>
+                    <div class="dcbm-car-price-wrapper">
+                        <button class="dcbm-show-price-btn">Show Price</button>
+                        <span class="dcbm-price-display" style="display:none;">PKR <?php echo number_format($price); ?> <span class="dcbm-price-per-day">/ day</span></span>
+                    </div>
                     <div class="dcbm-car-buttons"><a href="<?php the_permalink(); ?>" class="dcbm-btn dcbm-btn-outline">Details</a><button class="dcbm-btn dcbm-btn-primary book-now" data-id="<?php echo get_the_ID(); ?>" data-price="<?php echo $price; ?>">Book Now</button></div>
                 </div>
             </div>
@@ -720,6 +727,7 @@ function dcbm_ajax_load_more_listing() {
     wp_send_json_success(array('html' => ob_get_clean()));
 }
 
+// Rest of AJAX handlers
 function dcbm_ajax_update_booking_status() {
     check_ajax_referer('dcbm_nonce','nonce');
     if(!current_user_can('manage_options')) wp_die('Unauthorized');

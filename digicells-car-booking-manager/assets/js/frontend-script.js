@@ -212,4 +212,12 @@ jQuery(document).ready(function($) {
     if ($('#dcbm-advanced-search-form').length) {
         loadInitialResults();
     }
+        // Show Price toggle
+    $(document).on('click', '.dcbm-show-price-btn', function() {
+        var $btn = $(this);
+        var $wrapper = $btn.closest('.dcbm-car-price-wrapper');
+        var $priceDisplay = $wrapper.find('.dcbm-price-display');
+        $btn.hide();
+        $priceDisplay.show();
+    });
 });

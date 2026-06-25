@@ -728,3 +728,37 @@
     width: 100%;
     margin-top: 20px;
 }
+
+/* ---------- SHOW PRICE BUTTON ---------- */
+.dcbm-car-price-wrapper {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.dcbm-show-price-btn {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.dcbm-show-price-btn:hover {
+    background: #e0e0e0;
+    border-color: #bbb;
+}
+.dcbm-price-display {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f68511;
+}
+.dcbm-price-display .dcbm-price-per-day {
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: #888;
+}
