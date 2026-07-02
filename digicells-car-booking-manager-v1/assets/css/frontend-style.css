@@ -1,6 +1,6 @@
 /* =============================================
    DIGICELLS CAR BOOKING MANAGER – FRONTEND STYLES
-   Version: 2.2 (No typography overrides)
+   Version: 2.0
    ============================================= */
 
 /* ---------- ADVANCED SEARCH FORM ---------- */
@@ -28,6 +28,8 @@
 }
 .dcbm-search-field label {
     display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
     margin-bottom: 5px;
     color: #1a1a2e;
 }
@@ -37,6 +39,7 @@
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
+    font-size: 1rem;
 }
 .dcbm-search-submit {
     background: #f68511;
@@ -44,6 +47,7 @@
     border: none;
     padding: 10px 24px;
     border-radius: 40px;
+    font-weight: 600;
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -55,6 +59,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 20px;
+    font-size: 0.9rem;
 }
 .dcbm-checkbox-label {
     display: inline-flex;
@@ -71,6 +76,30 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+}
+
+/* ---------- SIMPLE SEARCH FORM (location only) ---------- */
+.dcbm-simple-search-form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+.dcbm-simple-search-form .dcbm-search-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+}
+.dcbm-simple-search-form .dcbm-search-field {
+    flex: 1;
+}
+.dcbm-simple-search-form input,
+.dcbm-simple-search-form select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
 }
 
 /* ---------- GRID FOR CAR LISTINGS (4 columns) ---------- */
@@ -118,6 +147,8 @@
     color: white;
     padding: 4px 10px;
     border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
 }
 .dcbm-availability-available {
     background: #10b981;
@@ -133,45 +164,34 @@
 }
 .dcbm-car-info h3 {
     margin: 0 0 8px;
+    font-size: 1.2rem;
+    font-weight: 700;
     color: #1a1a2e;
 }
 .dcbm-car-specs {
     display: flex;
     gap: 12px;
     margin: 8px 0;
+    font-size: 0.85rem;
     color: #666;
 }
 .dcbm-car-location {
+    font-size: 0.85rem;
     color: #888;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
     gap: 4px;
 }
-.dcbm-car-price-wrapper {
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-.dcbm-show-price-btn {
-    background: #f0f0f0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 6px 14px;
-    color: #333;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.dcbm-show-price-btn:hover {
-    background: #e0e0e0;
-    border-color: #bbb;
-}
-.dcbm-price-display {
+.dcbm-car-price {
+    font-size: 1.2rem;
+    font-weight: bold;
     color: #f68511;
+    margin: 10px 0;
 }
-.dcbm-price-display .dcbm-price-per-day {
+.dcbm-car-price span {
+    font-size: 0.8rem;
+    font-weight: normal;
     color: #888;
 }
 .dcbm-car-buttons {
@@ -183,6 +203,8 @@
     display: inline-block;
     padding: 8px 16px;
     border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
@@ -223,6 +245,8 @@
     border: none;
     padding: 10px 30px;
     border-radius: 40px;
+    font-weight: bold;
+    font-size: 1rem;
     cursor: pointer;
     transition: background 0.2s;
 }
@@ -244,6 +268,7 @@
     margin: 0 4px;
     border-radius: 6px;
     cursor: pointer;
+    font-size: 0.9rem;
     transition: all 0.2s;
 }
 .dcbm-page-btn:hover {
@@ -256,6 +281,7 @@
     border-color: #f68511;
 }
 .dcbm-prev, .dcbm-next {
+    font-weight: 600;
     background: #f8f9fa;
 }
 .dcbm-prev::before {
@@ -298,6 +324,7 @@
 }
 .dcbm-modal-header h2 {
     margin: 0;
+    font-size: 1.5rem;
     color: #1a1a2e;
 }
 .dcbm-modal-close {
@@ -327,6 +354,8 @@
 .dcbm-form-group label {
     display: block;
     margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
     color: #333;
 }
 .dcbm-form-group input,
@@ -369,8 +398,11 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 10px;
+    font-size: 1rem;
 }
 .dcbm-price-total {
+    font-weight: bold;
+    font-size: 1.2rem;
     color: #f68511;
     border-top: 1px dashed #ddd;
     padding-top: 8px;
@@ -382,6 +414,8 @@
     border: none;
     padding: 12px 20px;
     border-radius: 40px;
+    font-weight: bold;
+    font-size: 1rem;
     cursor: pointer;
     width: 100%;
     margin-top: 25px;
@@ -445,16 +479,286 @@
 .dcbm-no-results {
     text-align: center;
     padding: 50px;
+    font-size: 1.1rem;
     color: #888;
 }
 .dcbm-filter-section {
     margin-bottom: 20px;
 }
 .dcbm-filter-title {
+    font-weight: 600;
     margin-bottom: 10px;
 }
 .dcbm-filter-options {
     display: flex;
     gap: 20px;
     flex-wrap: wrap;
+}
+
+
+
+/* Merged search form – inline layout */
+.dcbm-merged-search .dcbm-search-bar {
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+.dcbm-form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: flex-end;
+}
+.dcbm-form-inline .dcbm-form-group {
+    flex: 1;
+    min-width: 150px;
+}
+.dcbm-form-inline .dcbm-form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+.dcbm-form-inline .dcbm-form-group input,
+.dcbm-form-inline .dcbm-form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+.dcbm-form-inline .checkboxes {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.dcbm-form-inline .checkboxes label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: normal;
+}
+.dcbm-search-submit {
+    background: #f68511;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+}
+@media (max-width: 768px) {
+    .dcbm-form-inline {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .dcbm-form-inline .checkboxes {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Responsive grid and load more button */
+.dcbm-cars-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 25px !important;
+    margin-top: 30px !important;
+}
+@media (max-width: 992px) {
+    .dcbm-cars-grid { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 576px) {
+    .dcbm-cars-grid { grid-template-columns: 1fr !important; }
+}
+.dcbm-load-more {
+    background: #f68511;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.dcbm-load-more:hover {
+    background: #e07a0c;
+}
+.dcbm-car-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.dcbm-car-image img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+.dcbm-car-info {
+    padding: 15px;
+}
+.dcbm-car-specs {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+.dcbm-car-location {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 10px;
+}
+.dcbm-car-price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f68511;
+    margin: 10px 0;
+}
+.dcbm-car-buttons {
+    display: flex;
+    gap: 10px;
+}
+.dcbm-btn-outline {
+    background: transparent;
+    border: 1px solid #f68511;
+    color: #f68511;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+.dcbm-btn-primary {
+    background: #f68511;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+/* Modal styles */
+.dcbm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dcbm-modal-content {
+    background: #fff;
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 16px;
+}
+.dcbm-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+}
+.dcbm-modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+}
+.dcbm-modal-body {
+    padding: 20px;
+}
+.dcbm-form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.dcbm-form-group {
+    flex: 1;
+}
+.dcbm-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+.dcbm-form-group input, .dcbm-form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+}
+.dcbm-service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.dcbm-price-summary {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 2px solid #eee;
+}
+.dcbm-price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.dcbm-price-total {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #f68511;
+}
+.dcbm-submit-btn {
+    background: #f68511;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* ---------- SHOW PRICE BUTTON ---------- */
+.dcbm-car-price-wrapper {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.dcbm-show-price-btn {
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.dcbm-show-price-btn:hover {
+    background: #e0e0e0;
+    border-color: #bbb;
+}
+.dcbm-price-display {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f68511;
+}
+.dcbm-price-display .dcbm-price-per-day {
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: #888;
 }

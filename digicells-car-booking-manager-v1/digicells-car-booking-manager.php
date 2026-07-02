@@ -1,8 +1,7 @@
 <?php
 /**
  * Plugin Name: Digicells Car Booking Manager
- * Version: 2.2.2
- *  Plugin URI: https://digicellinternational.github.io
+ * Version: 2.2.1
  * Author: Sardar Ali Khamosh (Digicells)
  * Text Domain: digicells-cbm
  * Description: Professional car booking system with agents, locations, extra services, load more listings, and automated emails.
@@ -10,7 +9,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('DCBM_VERSION', '2.2.2');
+define('DCBM_VERSION', '2.2.1');
 define('DCBM_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('DCBM_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -629,92 +628,60 @@ function dcbm_ajax_submit_booking() {
 }
 
 // ==========================================================
-// SHARED CAR QUERY + CARD RENDER HELPERS
-// (used by both shortcodes for the initial server-rendered
-// page AND by the AJAX handlers for search/load more, so the
-// markup and ordering always stay identical)
-// ==========================================================
-function dcbm_get_cars_query($location_id = 0, $paged = 1, $per_page = 4) {
-    $args = array(
-        'post_type'      => 'dcbm_car',
-        'post_status'    => 'publish',
-        'posts_per_page' => $per_page,
-        'paged'          => $paged,
-        'orderby'        => 'title',
-        'order'          => 'ASC',
-        'meta_query'     => array(
-            'relation' => 'OR',
-            array(
-                'key'     => '_dcbm_availability',
-                'value'   => 'available',
-                'compare' => '='
-            ),
-            array(
-                'key'     => '_dcbm_availability',
-                'compare' => 'NOT EXISTS'
-            )
-        )
-    );
-    if ($location_id) {
-        $args['meta_query'][] = array(
-            'key'   => '_dcbm_location_id',
-            'value' => $location_id
-        );
-    }
-    return new WP_Query($args);
-}
-
-function dcbm_render_car_card() {
-    $price = get_post_meta(get_the_ID(), '_dcbm_price_per_day', true);
-    $trans = get_post_meta(get_the_ID(), '_dcbm_transmission', true);
-    $capacity = get_post_meta(get_the_ID(), '_dcbm_passenger_capacity', true);
-    $loc_id = get_post_meta(get_the_ID(), '_dcbm_location_id', true);
-    $location_name = $loc_id ? get_the_title($loc_id) : '';
-    ?>
-    <div class="dcbm-car-card">
-        <div class="dcbm-car-image">
-            <?php if(has_post_thumbnail()) the_post_thumbnail('medium'); else echo '<img src="'.DCBM_PLUGIN_URL.'assets/images/placeholder-car.jpg">'; ?>
-        </div>
-        <div class="dcbm-car-info">
-            <h3><?php the_title(); ?></h3>
-            <div class="dcbm-car-specs"><span><?php echo ucfirst($trans); ?></span><span>👥 <?php echo $capacity; ?> seats</span></div>
-            <div class="dcbm-car-location">📍 <?php echo esc_html($location_name); ?></div>
-            <div class="dcbm-car-price-wrapper">
-                <button class="dcbm-show-price-btn">Show Price</button>
-                <span class="dcbm-price-display" style="display:none;">PKR <?php echo number_format($price); ?> <span class="dcbm-price-per-day">/ day</span></span>
-            </div>
-            <div class="dcbm-car-buttons">
-                <a href="<?php the_permalink(); ?>" class="dcbm-btn dcbm-btn-outline">Details</a>
-                <button class="dcbm-btn dcbm-btn-primary book-now" data-id="<?php echo get_the_ID(); ?>" data-price="<?php echo $price; ?>">Book Now</button>
-            </div>
-        </div>
-    </div>
-    <?php
-}
-
-function dcbm_render_car_cards($cars_query) {
-    if ($cars_query->have_posts()):
-        while ($cars_query->have_posts()): $cars_query->the_post();
-            dcbm_render_car_card();
-        endwhile;
-        wp_reset_postdata();
-    else:
-        echo '<div class="dcbm-no-results">No cars available.</div>';
-    endif;
-}
-
-// ==========================================================
-// AJAX: SEARCH (WITH FILTERS) & LOAD MORE
+// UPDATED AJAX FUNCTIONS WITH "SHOW PRICE" BUTTON
 // ==========================================================
 function dcbm_ajax_advanced_search_loadmore() {
     check_ajax_referer('dcbm_nonce','nonce');
     $location_id = isset($_POST['location_id']) ? intval($_POST['location_id']) : 0;
     $paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1;
     $per_page = 4;
-
-    $cars = dcbm_get_cars_query($location_id, $paged, $per_page);
+    
+    $args = array(
+        'post_type' => 'dcbm_car',
+        'post_status' => 'publish',
+        'posts_per_page' => $per_page,
+        'paged' => $paged,
+        'meta_query' => array(
+            array('key' => '_dcbm_availability', 'value' => 'available'),
+        )
+    );
+    if ($location_id) {
+        $args['meta_query'][] = array('key' => '_dcbm_location_id', 'value' => $location_id);
+    }
+    
+    $cars = new WP_Query($args);
     ob_start();
-    dcbm_render_car_cards($cars);
+    if ($cars->have_posts()):
+        while ($cars->have_posts()): $cars->the_post();
+            $price = get_post_meta(get_the_ID(), '_dcbm_price_per_day', true);
+            $trans = get_post_meta(get_the_ID(), '_dcbm_transmission', true);
+            $capacity = get_post_meta(get_the_ID(), '_dcbm_passenger_capacity', true);
+            $loc_id = get_post_meta(get_the_ID(), '_dcbm_location_id', true);
+            $location_name = $loc_id ? get_the_title($loc_id) : '';
+            ?>
+            <div class="dcbm-car-card">
+                <div class="dcbm-car-image">
+                    <?php if(has_post_thumbnail()) the_post_thumbnail('medium'); else echo '<img src="'.DCBM_PLUGIN_URL.'assets/images/placeholder-car.jpg">'; ?>
+                </div>
+                <div class="dcbm-car-info">
+                    <h3><?php the_title(); ?></h3>
+                    <div class="dcbm-car-specs"><span><?php echo ucfirst($trans); ?></span><span>👥 <?php echo $capacity; ?> seats</span></div>
+                    <div class="dcbm-car-location">📍 <?php echo esc_html($location_name); ?></div>
+                    <div class="dcbm-car-price-wrapper">
+                        <button class="dcbm-show-price-btn">Show Price</button>
+                        <span class="dcbm-price-display" style="display:none;">PKR <?php echo number_format($price); ?> <span class="dcbm-price-per-day">/ day</span></span>
+                    </div>
+                    <div class="dcbm-car-buttons">
+                        <a href="<?php the_permalink(); ?>" class="dcbm-btn dcbm-btn-outline">Details</a>
+                        <button class="dcbm-btn dcbm-btn-primary book-now" data-id="<?php echo get_the_ID(); ?>" data-price="<?php echo $price; ?>">Book Now</button>
+                    </div>
+                </div>
+            </div>
+        <?php endwhile;
+    else:
+        echo '<div class="dcbm-no-results">No cars available.</div>';
+    endif;
+    wp_reset_postdata();
     $html = ob_get_clean();
     $total_pages = $cars->max_num_pages;
     wp_send_json_success(array('html' => $html, 'total_pages' => $total_pages, 'current_page' => $paged));
@@ -722,15 +689,42 @@ function dcbm_ajax_advanced_search_loadmore() {
 
 function dcbm_ajax_load_more_listing() {
     check_ajax_referer('dcbm_nonce','nonce');
-    $paged = isset($_POST['paged']) ? intval($_POST['paged']) : 1;
+    $paged = intval($_POST['paged']);
     $per_page = 4;
-
-    $cars = dcbm_get_cars_query(0, $paged, $per_page);
+    $args = array(
+        'post_type' => 'dcbm_car',
+        'post_status' => 'publish',
+        'posts_per_page' => $per_page,
+        'paged' => $paged,
+        'meta_query' => array(array('key' => '_dcbm_availability', 'value' => 'available'))
+    );
+    $cars = new WP_Query($args);
     ob_start();
-    dcbm_render_car_cards($cars);
-    $html = ob_get_clean();
-    $total_pages = $cars->max_num_pages;
-    wp_send_json_success(array('html' => $html, 'total_pages' => $total_pages, 'current_page' => $paged));
+    if ($cars->have_posts()):
+        while ($cars->have_posts()): $cars->the_post();
+            $price = get_post_meta(get_the_ID(), '_dcbm_price_per_day', true);
+            $trans = get_post_meta(get_the_ID(), '_dcbm_transmission', true);
+            $capacity = get_post_meta(get_the_ID(), '_dcbm_passenger_capacity', true);
+            $loc_id = get_post_meta(get_the_ID(), '_dcbm_location_id', true);
+            $location_name = $loc_id ? get_the_title($loc_id) : '';
+            ?>
+            <div class="dcbm-car-card">
+                <div class="dcbm-car-image"><?php if(has_post_thumbnail()) the_post_thumbnail('medium'); ?></div>
+                <div class="dcbm-car-info">
+                    <h3><?php the_title(); ?></h3>
+                    <div class="dcbm-car-specs"><span><?php echo ucfirst($trans); ?></span><span>👥 <?php echo $capacity; ?> seats</span></div>
+                    <div class="dcbm-car-location">📍 <?php echo esc_html($location_name); ?></div>
+                    <div class="dcbm-car-price-wrapper">
+                        <button class="dcbm-show-price-btn">Show Price</button>
+                        <span class="dcbm-price-display" style="display:none;">PKR <?php echo number_format($price); ?> <span class="dcbm-price-per-day">/ day</span></span>
+                    </div>
+                    <div class="dcbm-car-buttons"><a href="<?php the_permalink(); ?>" class="dcbm-btn dcbm-btn-outline">Details</a><button class="dcbm-btn dcbm-btn-primary book-now" data-id="<?php echo get_the_ID(); ?>" data-price="<?php echo $price; ?>">Book Now</button></div>
+                </div>
+            </div>
+        <?php endwhile;
+    endif;
+    wp_reset_postdata();
+    wp_send_json_success(array('html' => ob_get_clean()));
 }
 
 // Rest of AJAX handlers
@@ -754,13 +748,6 @@ function dcbm_single_car_template($single) {
 // SHORTCODES
 function dcbm_advanced_search_shortcode() {
     $locations = get_posts(array('post_type' => 'dcbm_location', 'posts_per_page' => -1, 'orderby' => 'title'));
-
-    // Render the first page of results server-side so the results
-    // section always shows default listings immediately, even before
-    // any filter is applied and without depending on an initial AJAX call.
-    $default_cars = dcbm_get_cars_query(0, 1, 4);
-    $total_pages = $default_cars->max_num_pages;
-
     ob_start();
     ?>
     <div class="dcbm-advanced-search-container">
@@ -772,32 +759,19 @@ function dcbm_advanced_search_shortcode() {
                 <div class="dcbm-search-field"><button type="submit" class="dcbm-search-submit">Search</button></div>
             </div>
         </form>
-        <div id="dcbm-advanced-results" class="dcbm-cars-grid">
-            <?php dcbm_render_car_cards($default_cars); ?>
-        </div>
-        <div id="dcbm-load-more-container" style="text-align:center;margin-top:20px;">
-            <button id="dcbm-load-more-btn" class="dcbm-load-more" data-current-page="1" data-total-pages="<?php echo esc_attr($total_pages); ?>" style="<?php echo ($total_pages > 1) ? '' : 'display:none;'; ?>">Load More</button>
-        </div>
+        <div id="dcbm-advanced-results" class="dcbm-cars-grid"></div>
+        <div id="dcbm-load-more-container" style="text-align:center;margin-top:20px;"><button id="dcbm-load-more-btn" class="dcbm-load-more" style="display:none;">Load More</button></div>
     </div>
     <?php
     return ob_get_clean();
 }
 
 function dcbm_car_listing_loadmore_shortcode() {
-    // Render the first row (4 cars) server-side; "Load More" only needs
-    // to fetch page 2 onward via AJAX.
-    $default_cars = dcbm_get_cars_query(0, 1, 4);
-    $total_pages = $default_cars->max_num_pages;
-
     ob_start();
     ?>
     <div class="dcbm-car-listing-wrapper">
-        <div id="dcbm-listing-grid" class="dcbm-cars-grid">
-            <?php dcbm_render_car_cards($default_cars); ?>
-        </div>
-        <div style="text-align:center;margin-top:20px;">
-            <button id="dcbm-listing-load-more" class="dcbm-load-more" data-current-page="1" data-total-pages="<?php echo esc_attr($total_pages); ?>" style="<?php echo ($total_pages > 1) ? '' : 'display:none;'; ?>">Load More</button>
-        </div>
+        <div id="dcbm-listing-grid" class="dcbm-cars-grid"></div>
+        <div style="text-align:center;margin-top:20px;"><button id="dcbm-listing-load-more" class="dcbm-load-more">Load More</button></div>
     </div>
     <?php
     return ob_get_clean();

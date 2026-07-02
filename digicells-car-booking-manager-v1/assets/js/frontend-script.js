@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
     var activeCarId = null, activeCarPrice = 0, selectedServices = {}, activeCarTitle = '';
     var currentSearchPage = 1, totalSearchPages = 1;
-    var currentListingPage = 1, totalListingPages = 1, listingLoading = false;
+    var currentListingPage = 1, listingLoading = false;
 
     // Load extra services
     function loadExtraServices() {
@@ -51,13 +51,7 @@ jQuery(document).ready(function($) {
         return total;
     }
 
-    // ---------------------------------------------------------
-    // Advanced Search + Load More
-    // The first page of results is already rendered server-side
-    // (in the shortcode output), so on page load we just read the
-    // current/total page state from the Load More button instead
-    // of firing an extra AJAX request.
-    // ---------------------------------------------------------
+    // Advanced Search with Load More
     function performSearch(page) {
         var formData = {
             action: 'dcbm_advanced_search',
@@ -75,7 +69,6 @@ jQuery(document).ready(function($) {
                     else $('#dcbm-advanced-results').append(r.data.html);
                     currentSearchPage = r.data.current_page;
                     totalSearchPages = r.data.total_pages;
-                    $('#dcbm-load-more-btn').data('current-page', currentSearchPage).data('total-pages', totalSearchPages);
                     if (currentSearchPage >= totalSearchPages) $('#dcbm-load-more-btn').hide();
                     else $('#dcbm-load-more-btn').show();
                 }
@@ -83,10 +76,10 @@ jQuery(document).ready(function($) {
         });
     }
 
-    if ($('#dcbm-advanced-search-form').length) {
-        // Results for page 1 already exist in the HTML; just sync state.
-        currentSearchPage = parseInt($('#dcbm-load-more-btn').data('current-page')) || 1;
-        totalSearchPages = parseInt($('#dcbm-load-more-btn').data('total-pages')) || 1;
+    // Initial load (default 4 listings)
+    function loadInitialResults() {
+        currentSearchPage = 1;
+        performSearch(1);
     }
 
     $('#dcbm-advanced-search-form').on('submit', function(e) {
@@ -102,11 +95,7 @@ jQuery(document).ready(function($) {
         }
     });
 
-    // ---------------------------------------------------------
-    // Simple Listing (1 row of 4 + Load More)
-    // First row is already rendered server-side; Load More only
-    // needs to fetch page 2 onward.
-    // ---------------------------------------------------------
+    // Simple Listing Load More
     function loadListing(page) {
         if (listingLoading) return;
         listingLoading = true;
@@ -115,16 +104,14 @@ jQuery(document).ready(function($) {
             type: 'POST',
             data: { action: 'dcbm_load_more_listing', nonce: dcbm_ajax.nonce, paged: page },
             success: function(r) {
-                listingLoading = false;
                 if (r.success && r.data.html) {
                     $('#dcbm-listing-grid').append(r.data.html);
-                    currentListingPage = r.data.current_page;
-                    totalListingPages = r.data.total_pages;
-                    $('#dcbm-listing-load-more').data('current-page', currentListingPage).data('total-pages', totalListingPages);
-                    if (currentListingPage >= totalListingPages) $('#dcbm-listing-load-more').hide();
-                    else $('#dcbm-listing-load-more').show();
+                    currentListingPage = page;
+                    listingLoading = false;
+                    if (r.data.html.trim() === '') $('#dcbm-listing-load-more').hide();
                 } else {
                     $('#dcbm-listing-load-more').hide();
+                    listingLoading = false;
                 }
             },
             error: function() { listingLoading = false; }
@@ -132,13 +119,9 @@ jQuery(document).ready(function($) {
     }
 
     if ($('#dcbm-listing-grid').length) {
-        // Row 1 already exists in the HTML; just sync state from the button.
-        currentListingPage = parseInt($('#dcbm-listing-load-more').data('current-page')) || 1;
-        totalListingPages = parseInt($('#dcbm-listing-load-more').data('total-pages')) || 1;
+        loadListing(1);
         $(document).on('click', '#dcbm-listing-load-more', function() {
-            if (currentListingPage < totalListingPages) {
-                loadListing(currentListingPage + 1);
-            }
+            loadListing(currentListingPage + 1);
         });
     }
 
@@ -225,7 +208,11 @@ jQuery(document).ready(function($) {
         });
     });
 
-    // Show Price toggle
+    // Trigger initial load for advanced search shortcode
+    if ($('#dcbm-advanced-search-form').length) {
+        loadInitialResults();
+    }
+        // Show Price toggle
     $(document).on('click', '.dcbm-show-price-btn', function() {
         var $btn = $(this);
         var $wrapper = $btn.closest('.dcbm-car-price-wrapper');
